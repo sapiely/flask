@@ -32,3 +32,9 @@ class MessageForm(FlaskForm):
     message = TextAreaField(_l('Message'), validators=[
         DataRequired(), Length(min=0, max=140)])
     submit = SubmitField(_('Submit'))
+
+
+class ActivityForm(FlaskForm):
+    # activity = TextAreaField(_l('New case'), validators=[DataRequired()])
+    activity = StringField(_l('New case'), validators=[DataRequired(), Length(max=140)])
+    submit = SubmitField(_l('Submit'))

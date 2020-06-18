@@ -1,4 +1,5 @@
-    <table class="table table-hover">
+<div class='bg-white'>
+    <table class="table bg-light">
         <tr>
             <td width="70px">
                 <a href="{{ url_for('main.user', username=post.author.username) }}">
@@ -13,20 +14,22 @@
                         </a>
                     </span>
                 {% endset %}
-                {{ _('%(username)s said %(when)s',
+                <div class="text-blackk">{{ _('%(username)s said %(when)s',
                     username=user_link, when=moment(post.timestamp).fromNow()) }}
-                <br>
-                <span id="post{{ post.id }}">{{ post.body }}</span>
-                {% if post.language and post.language != g.locale %}
-                <br><br>
-                <span id="translation{{ post.id }}">
-                    <a href="javascript:translate(
-                                '#post{{ post.id }}',
-                                '#translation{{ post.id }}',
-                                '{{ post.language }}',
-                                '{{ g.locale }}');">{{ _('Translate') }}</a>
-                </span>
+                    <br>
+                    <span id="post{{ post.id }}">{{ post.body }}</span>
+                    {% if post.language and post.language != g.locale %}
+                    <br><br>
+                    <span id="translation{{ post.id }}">
+                        <a href="javascript:translate(
+                            '#post{{ post.id }}',
+                            '#translation{{ post.id }}',
+                            '{{ post.language }}',
+                            '{{ g.locale }}');">{{ _('Translate') }}</a>
+                        </span>
+                    </div>
                 {% endif %}
             </td>
         </tr>
     </table>
+</div>

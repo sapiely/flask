@@ -1,9 +1,10 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, g, jsonify, current_app
 from flask_login import current_user, login_required
+import app
 from app import db
-from app.models import User, Post
-from app.main.forms import EditProfileForm, PostForm
+from app.models import User, Post, Activity
+from app.main.forms import EditProfileForm, PostForm, ActivityForm
 from flask_babel import _, get_locale
 from flask_babel import lazy_gettext as _l
 from googletrans import Translator
@@ -12,6 +13,8 @@ from app.main import bp
 from app.main.forms import MessageForm
 from app.models import Message
 from app.models import Notification
+import os
+from flask import send_from_directory
 
 
 @bp.before_app_request
@@ -49,6 +52,12 @@ def index():
                            prev_url=prev_url)
 
 
+@bp.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join('static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 @bp.route('/explore')
 @login_required
 def explore():
@@ -76,23 +85,6 @@ def user(username):
         if posts.has_prev else None
     return render_template('user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url)
-
-
-@bp.route('/edit_profile', methods=['GET', 'POST'])
-@login_required
-def edit_profile():
-    form = EditProfileForm(current_user.username)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.about_me = form.about_me.data
-        db.session.commit()
-        flash(_l('Your changes have been saved.'))
-        return redirect(url_for('main.edit_profile'))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Edit Profile',
-                           form=form)
 
 
 @bp.route('/follow/<username>')
@@ -181,10 +173,69 @@ def messages():
 @login_required
 def notifications():
     since = request.args.get('since', 0.0, type=float)
-    notifications = current_user.notification.filter(
+    notifications = current_user.notifications.filter(
         Notification.timestamp > since).order_by(Notification.timestamp.asc())
     return jsonify([{
         'name': n.name,
         'data': n.get_data(),
         'timestamp': n.timestamp
     }for n in notifications])
+
+@bp.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm(current_user.username)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash(_l('Your changes have been saved.'))
+        return redirect(url_for('main.edit_profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', title='Edit Profile',
+                           form=form)
+
+
+@bp.route('/todolist', methods=['GET', 'POST'])
+@login_required
+def todolist():
+    form = ActivityForm()
+    if form.validate_on_submit():
+        activity = Activity(body=form.activity.data, author=current_user)
+        db.session.add(activity)
+        db.session.commit()
+        flash(_l('Your activity is now live!'))
+        return redirect(url_for('main.todolist'))
+    page = request.args.get('page', 1, type=int)
+    cases = current_user.followed_activity().paginate(
+        page, 10, False)
+    
+    
+    next_url = url_for('main.todolist', page=cases.next_num) \
+        if cases.has_next else None
+    prev_url = url_for('main.todolist', page=cases.prev_num) \
+        if cases.has_prev else None
+    return render_template('todolist.html', title='Todo list', form=form,
+                           activity=cases.items, next_url=next_url,
+                           prev_url=prev_url)
+
+
+@bp.route('/complete', methods=['POST'])
+@login_required
+def complete():
+    case_id = request.form['case_id']
+    case = Activity.query.filter_by(id=case_id).first()
+    case.complete = not case.complete
+    db.session.commit()
+    return redirect(url_for('main.todolist'))
+
+
+@bp.route('/delete_case', methods=['POST'])
+@login_required
+def delete_case():
+    case_id = request.form['case_id']
+    Activity.query.filter_by(id=case_id).delete()
+    db.session.commit()
+    return redirect(url_for('main.todolist'))

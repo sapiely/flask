@@ -1,9 +1,16 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>{{ _('Messages') }}</h1>
-    {% for post in messages %}
-        {% include '_post.html' %}
+    <h1>{{ _('Your To Do List, %(username)s!', username=current_user.username) }}</h1>
+    {% if form %}
+    <form class="form form-horizontal" method="post" role="post">
+{{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+    </form>
+    <br>
+    {% endif %}
+    {% for case in activity %}
+        {% include '_case.html' %}
     {% endfor %}
     <nav>
         <ul class="pagination">

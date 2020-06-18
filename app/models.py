@@ -63,6 +63,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
 
+    activity = db.relationship('Activity', backref='author', lazy='dynamic')
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -94,6 +96,11 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
             followers.c.follower_id == self.id)
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
+
+    def followed_activity(self):
+        activity = Activity.query.filter_by(user_id=self.id)
+        return activity.order_by(Activity.complete.asc())
+
 
     def new_messages(self):
         last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
@@ -166,7 +173,17 @@ class Post(db.Model):
     language = db.Column(db.String(5))
 
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        return f'<Post {self.body}>'
+
+
+class Activity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.String(140))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    complete = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return f'<Activity {self.body}>'
 
 
 class Message(db.Model):
