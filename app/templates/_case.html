@@ -1,28 +1,28 @@
 <p>
     {% if case.complete %}
-        <a class="btn btn-danger" data-toggle="modal" data-target="#exampleModal{{ case.id }}">❌</a>
-        <a class="btn btn-warning" onclick="complete({{ case.id }})">⇧</a>
+        <a class="btn btn-danger text-white" id='submit' data-toggle="modal" data-target="#exampleModal{{ case.id }}">❌</a>
+        <a class="btn btn-warning text-white" onclick="complete({{ case.id }})">⇧</a>
     <s>
         <span id="case{{ case.id }}">{{ case.body }}</span>
     </s>
     {% else %}
-        <a class="btn btn-primary" onclick="complete({{ case.id }})">✓</a>
+        <a class="btn btn-primary text-white" onclick="complete({{ case.id }})">✓</a>
         <span id="case{{ case.id }}">{{ case.body }}</span>
     {% endif %}
     </a>
 
     <div class="modal fade" id="exampleModal{{ case.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
-          <div class="modal-content">
+          <div class="modal-content bg-light">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">Case deleting</h5>
             </div>
             <div class="modal-body">
-              Are you sure want to delete complete case?
+              Are you sure want to delete completed "{{ case.body }}" case?
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <a class="btn btn-danger" onclick="delete_case({{ case.id }});">Delete</a>
+              <button type="button" class="btn btn-secondary text-white" data-dismiss="modal">Close</button>
+              <a class="btn btn-danger text-white" onclick="delete_case({{ case.id }});">Delete</a>
             </div>
           </div>
         </div>

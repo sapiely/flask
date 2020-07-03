@@ -43,6 +43,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
@@ -64,6 +65,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
 
     activity = db.relationship('Activity', backref='author', lazy='dynamic')
+    events = db.relationship('Event', backref='author', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -101,6 +103,9 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
         activity = Activity.query.filter_by(user_id=self.id)
         return activity.order_by(Activity.complete.asc())
 
+    def followed_events(self):
+        event = Event.query.filter_by(user_id=self.id)
+        return event
 
     def new_messages(self):
         last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
@@ -184,6 +189,20 @@ class Activity(db.Model):
 
     def __repr__(self):
         return f'<Activity {self.body}>'
+
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    title = db.Column(db.String(140))
+    start = db.Column(db.String(140))
+    end = db.Column(db.String(140))
+    color = db.Column(db.String(10))
+    allDay = db.Column(db.Boolean, default=False)
+    url = db.Column(db.String(140), default="")
+
+    def __repr__(self):
+        return f'<Event {self.title}>'
 
 
 class Message(db.Model):

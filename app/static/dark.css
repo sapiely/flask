@@ -7,6 +7,15 @@
   background-color: #333 !important;
 }
 
+.fc-today {
+  background-color: rgba(41, 38, 180, 0.65) !important;
+}
+
+[data-theme="dark"] .fc-today {
+  background-color: rgba(41, 38, 180, 0.65) !important;
+}
+
+
 [data-theme="dark"] .bg-white {
   background-color: #000 !important;
 }
@@ -17,4 +26,8 @@
 
 [data-theme="dark"] .text-blackk {
   color: #eee !important;
+}
+
+.fc-content {
+  cursor: pointer;
 }

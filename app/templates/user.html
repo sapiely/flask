@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <table class="table table-hover">
+    <table class="table text-blackk">
         <tr>
-            <td width="256px"><img src="{{ user.avatar(256) }}"></td>
+            <td><img width="200px" height="200px" class="rounded-circle account-img" src="{{ image_file }}"></td>
             <td>
                 <h1>{{ _('User') }}: {{ user.username }}</h1>
                 {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
@@ -32,18 +32,10 @@
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
-    <nav aria-label="...">
-        <ul class="pager">
-            <li class="previous{% if not prev_url %} disabled{% endif %}">
-                <a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span> {{ _('Newer posts') }}
-                </a>
-            </li>
-            <li class="next{% if not next_url %} disabled{% endif %}">
-                <a href="{{ next_url or '#' }}">
-                    {{ _('Older posts') }} <span aria-hidden="true">&rarr;</span>
-                </a>
-            </li>
+    <nav>
+        <ul class="pagination">
+          <li class="page-item previous{% if not prev_url %} disabled{% endif %}" ><a class="page-link bg-white" href="{{ prev_url or '#' }}">{{ _('Previous') }}</a></li>
+          <li class="page-item next{% if not next_url %} disabled{% endif %}""><a class="page-link bg-white" href="{{ next_url or '#' }}">{{ _('Next') }}</a></li>
         </ul>
     </nav>
 {% endblock %}

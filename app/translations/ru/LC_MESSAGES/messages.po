@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-04-24 00:13+0300\n"
+"POT-Creation-Date: 2020-06-24 23:12+0300\n"
 "PO-Revision-Date: 2020-04-19 20:53+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -27,17 +27,21 @@ msgstr "Пожалуйста, войдите, чтобы открыть эту �
 msgid "Error: the translation service failed."
 msgstr "Ошибка: процесс перевода провален"
 
-#: app/auth/forms.py:9 app/auth/forms.py:16 app/main/forms.py:10
+#: app/auth/forms.py:8 app/auth/forms.py:16 app/main/forms.py:12
 msgid "Username"
 msgstr "Имя пользователя"
 
-#: app/auth/forms.py:10 app/auth/forms.py:18
+#: app/auth/forms.py:9 app/auth/forms.py:18
 msgid "Password"
 msgstr "Пароль"
 
-#: app/auth/forms.py:11
+#: app/auth/forms.py:10
 msgid "Remember Me"
 msgstr "Запомнить меня"
+
+#: app/auth/forms.py:11 app/auth/forms.py:21
+msgid "ReCaptcha invalid"
+msgstr "Проверка капчи неудачна"
 
 #: app/auth/forms.py:12 app/auth/routes.py:27 app/templates/auth/login.html:5
 msgid "Sign In"
@@ -51,15 +55,15 @@ msgstr "Адресс электронной почты"
 msgid "Repeat Password"
 msgstr "Повторите пароль"
 
-#: app/auth/forms.py:21 app/templates/auth/register.html:5
+#: app/auth/forms.py:22 app/templates/auth/register.html:5
 msgid "Register"
 msgstr "Регистрация"
 
-#: app/auth/forms.py:26 app/main/forms.py:23
+#: app/auth/forms.py:27 app/main/forms.py:26
 msgid "Please use a different username."
 msgstr "Пожалуйста, используйте другое имя пользователя"
 
-#: app/auth/forms.py:31
+#: app/auth/forms.py:32
 msgid "Please use a different email address."
 msgstr "Пожалуйста, используйте другой Email"
 
@@ -71,119 +75,232 @@ msgstr "Неверные имя пользователя или пароль"
 msgid "Congratulations, you are now a registered user!"
 msgstr "Ура, вы зарегестрированы!"
 
-#: app/main/forms.py:11
+#: app/main/forms.py:13
 msgid "About me"
 msgstr "Обо мне"
 
-#: app/main/forms.py:13 app/main/forms.py:28 app/main/forms.py:34
+#: app/main/forms.py:16 app/main/forms.py:32 app/main/forms.py:39
+#: app/main/forms.py:44
 msgid "Submit"
 msgstr "Подтвердить"
 
-#: app/main/forms.py:27
+#: app/main/forms.py:30
 msgid "Say something"
 msgstr "Сморозь чёт"
 
-#: app/main/forms.py:32
+#: app/main/forms.py:36
 msgid "Message"
 msgstr "Сообщение"
 
-#: app/main/routes.py:37
+#: app/main/forms.py:43
+msgid "New case"
+msgstr "Новое дело"
+
+#: app/main/routes.py:42
 msgid "Your post is now live!"
 msgstr "Ваш пост полетел"
 
-#: app/main/routes.py:88
-msgid "Your changes have been saved."
-msgstr "Ваши изменения сохранены."
-
-#: app/main/routes.py:102 app/main/routes.py:118
+#: app/main/routes.py:97 app/main/routes.py:113
 #, python-format
 msgid "User %(username)s not found."
 msgstr "Пользователь %(username)s не найден"
 
-#: app/main/routes.py:105
+#: app/main/routes.py:100
 msgid "You cannot follow yourself!"
 msgstr "Вы не можете подписаться на себя"
 
-#: app/main/routes.py:109
+#: app/main/routes.py:104
 #, python-format
 msgid "You are following %(username)s!"
 msgstr "Вы подписались на %(username)s"
 
-#: app/main/routes.py:121
+#: app/main/routes.py:116
 msgid "You cannot unfollow yourself!"
 msgstr "Вы не можете отписаться от себя"
 
-#: app/main/routes.py:125
+#: app/main/routes.py:120
 #, python-format
 msgid "You are not following %(username)s."
 msgstr "Вы отписались от %(username)s"
 
-#: app/main/routes.py:154
+#: app/main/routes.py:150
 msgid "Your message has been sent."
 msgstr "Ваше сообщение отправлено"
 
-#: app/main/routes.py:156
+#: app/main/routes.py:152
 msgid "Send Message"
 msgstr "Отправить сообщение"
 
-#: app/templates/_post.html:16
+#: app/main/routes.py:219
+msgid "Your changes have been saved."
+msgstr "Ваши изменения сохранены."
+
+#: app/main/routes.py:237
+msgid "Your activity is now live!"
+msgstr "Дело добавлено!"
+
+#: app/templates/_post.html:17
 #, python-format
 msgid "%(username)s said %(when)s"
 msgstr "%(username)s сказал %(when)s"
 
-#: app/templates/_post.html:27
+#: app/templates/_post.html:28
 msgid "Translate"
 msgstr "Перевести"
 
-#: app/templates/base.html:21
+#: app/templates/base.html:25
 msgid "Home"
 msgstr "На главную"
 
-#: app/templates/base.html:22
+#: app/templates/base.html:26
 msgid "Explore"
 msgstr "Исследовать"
 
-#: app/templates/base.html:26
+#: app/templates/base.html:27
+msgid "To Do list"
+msgstr "Список дел"
+
+#: app/templates/base.html:28
+msgid "Calendar"
+msgstr "Календарь"
+
+#: app/templates/base.html:40
+msgid "Dark Theme"
+msgstr "Тёмная Тема"
+
+#: app/templates/base.html:48
 msgid "Login"
 msgstr "Вход"
 
-#: app/templates/base.html:28
+#: app/templates/base.html:50
 msgid "Profile"
 msgstr "Профиль"
 
-#: app/templates/base.html:29
+#: app/templates/base.html:53 app/templates/messages.html:4
 msgid "Messages"
 msgstr "Сообщения"
 
-#: app/templates/base.html:30
+#: app/templates/base.html:62
 msgid "Logout"
 msgstr "Выйти"
 
-#: app/templates/base.html:67
+#: app/templates/base.html:85 app/templates/base.html:95
+#: app/templates/base.html:105 app/templates/calendar.html:114
 msgid "Error: Could not contact server."
 msgstr "Ошибка: не возможно соединиться к серверу"
+
+#: app/templates/calendar.html:53
+msgid "Name of Event"
+msgstr "Название мероприятия"
+
+#: app/templates/calendar.html:56
+msgid "Start Date"
+msgstr "Дата начала"
+
+#: app/templates/calendar.html:59
+msgid "All day"
+msgstr "Весь день"
+
+#: app/templates/calendar.html:62
+msgid "End Date"
+msgstr "Дата окончания"
+
+#: app/templates/calendar.html:65
+msgid "Color"
+msgstr "Цвет"
+
+#: app/templates/calendar.html:74
+msgid "Add Event"
+msgstr "Добавить мероприятие"
+
+#: app/templates/calendar.html:77
+msgid "Delete mode"
+msgstr "Режим удаления"
+
+#: app/templates/calendar.html:80
+msgid "Delete All"
+msgstr "Удалить всё"
+
+#: app/templates/calendar.html:96
+msgid "Event Deleting"
+msgstr "Удаление мероприятия"
+
+#: app/templates/calendar.html:100
+msgid "Close"
+msgstr "Отмена"
+
+#: app/templates/calendar.html:101
+msgid "Delete"
+msgstr "Удалить"
+
+#: app/templates/calendar.html:114
+msgid "Delete all events?"
+msgstr "Удалить все мероприятия?"
+
+#: app/templates/calendar.html:114
+msgid "Are you sure?"
+msgstr "Вы уверены?"
+
+#: app/templates/calendar.html:114
+msgid "Failed."
+msgstr "Неудачно."
+
+#: app/templates/calendar.html:114
+msgid "Today"
+msgstr "Сегодня"
+
+#: app/templates/calendar.html:114
+msgid "Month"
+msgstr "Месяц"
+
+#: app/templates/calendar.html:114
+msgid "Week"
+msgstr "Неделя"
+
+#: app/templates/calendar.html:114
+msgid "Day"
+msgstr "День"
+
+#: app/templates/calendar.html:114
+msgid "en"
+msgstr "ru"
+
+#: app/templates/calendar.html:114
+msgid "Event *"
+msgstr "Мероприятие *"
+
+#: app/templates/calendar.html:114
+msgid "* will be deleted!"
+msgstr "* будет удалено!"
 
 #: app/templates/edit_profile.html:5
 msgid "Edit Profile"
 msgstr "Редактирование профиля"
 
-#: app/templates/index.html:5
+#: app/templates/index.html:6
 #, python-format
 msgid "Hi, %(username)s!"
 msgstr "Привет, %(username)s!"
 
-#: app/templates/index.html:17 app/templates/user.html:39
-msgid "Newer posts"
-msgstr "Новее"
+#: app/templates/index.html:16 app/templates/messages.html:10
+#: app/templates/todolist.html:17 app/templates/user.html:37
+msgid "Previous"
+msgstr "Назад"
 
-#: app/templates/index.html:22 app/templates/user.html:44
-msgid "Older posts"
-msgstr "Старее"
+#: app/templates/index.html:17 app/templates/messages.html:11
+#: app/templates/todolist.html:18 app/templates/user.html:38
+msgid "Next"
+msgstr "Далее"
 
 #: app/templates/send_message.html:5
 #, python-format
 msgid "Send Message to %(recipient)s"
 msgstr "Отправить сообщение %(recipient)s"
+
+#: app/templates/todolist.html:5
+#, python-format
+msgid "Your To Do List, %(username)s!"
+msgstr "Ваш список дел, %(username)s!"
 
 #: app/templates/user.html:8
 msgid "User"
@@ -219,11 +336,11 @@ msgstr "Отписаться"
 msgid "Send private message"
 msgstr "Отправить личное сообщение"
 
-#: app/templates/auth/login.html:12
+#: app/templates/auth/login.html:17
 msgid "New User?"
 msgstr "Впервые?"
 
-#: app/templates/auth/login.html:12
+#: app/templates/auth/login.html:17
 msgid "Click to Register!"
 msgstr "Зарегистрируйтесь!"
 
@@ -242,6 +359,4 @@ msgstr "Вы мне сайт сломали"
 #: app/templates/errors/500.html:5
 msgid "The administrator has been notified. Sorry for the inconvenience!"
 msgstr "Великий Админ-Всея-Руси уведомлен. Надеюсь вы гордитесь собой!"
-
-
 

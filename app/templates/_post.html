@@ -3,7 +3,7 @@
         <tr>
             <td width="70px">
                 <a href="{{ url_for('main.user', username=post.author.username) }}">
-                    <img src="{{ post.author.avatar(70) }}" />
+                    <img width="75px" height="75px" class="rounded-circle account-img" src="../static/profile_pics/{{ post.author.image_file }}" />
                 </a>
             </td>
             <td>

@@ -5,7 +5,7 @@
 {% block app_content %}
     <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
     {% if form %}
-    {{ wtf.quick_form(form, button_map={'submit': 'primary'}) }}
+    {{ wtf.quick_form(form, button_map={'submit': 'primary'}, id='bg-white') }}
     <br>
     {% endif %}
     {% for post in posts %}
@@ -13,8 +13,8 @@
     {% endfor %}
     <nav>
         <ul class="pagination">
-          <li class="page-item previous{% if not prev_url %} disabled{% endif %}" ><a class="page-link bg-white" href="{{ prev_url or '#' }}">Previous</a></li>
-          <li class="page-item next{% if not next_url %} disabled{% endif %}""><a class="page-link bg-white" href="{{ next_url or '#' }}">Next</a></li>
+          <li class="page-item previous{% if not prev_url %} disabled{% endif %}" ><a class="page-link bg-white" href="{{ prev_url or '#' }}">{{ _('Previous') }}</a></li>
+          <li class="page-item next{% if not next_url %} disabled{% endif %}""><a class="page-link bg-white" href="{{ next_url or '#' }}">{{ _('Next') }}</a></li>
         </ul>
     </nav>
 </div>

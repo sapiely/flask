@@ -1,9 +1,9 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, g, jsonify, current_app
 from flask_login import current_user, login_required
-import app
+from PIL import Image
 from app import db
-from app.models import User, Post, Activity
+from app.models import User, Post, Activity, Event
 from app.main.forms import EditProfileForm, PostForm, ActivityForm
 from flask_babel import _, get_locale
 from flask_babel import lazy_gettext as _l
@@ -11,10 +11,11 @@ from googletrans import Translator
 from app.translate import translate
 from app.main import bp
 from app.main.forms import MessageForm
-from app.models import Message
-from app.models import Notification
+from app.models import Message, Notification
 import os
 from flask import send_from_directory
+import secrets
+from json import dumps
 
 
 @bp.before_app_request
@@ -76,6 +77,7 @@ def explore():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
+    image_file = url_for('static', filename='profile_pics/'+current_user.image_file)
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
@@ -83,7 +85,7 @@ def user(username):
         if posts.has_next else None
     prev_url = url_for('main.user', username=user.username, page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('user.html', user=user, posts=posts.items,
+    return render_template('user.html', user=user, posts=posts.items, image_file=image_file,
                            next_url=next_url, prev_url=prev_url)
 
 
@@ -181,11 +183,36 @@ def notifications():
         'timestamp': n.timestamp
     }for n in notifications])
 
+
+def del_old_picture(user):
+    picture_path = os.path.join(current_app.config['BASEDIR'], 'app', 'static', 'profile_pics', user)
+    print(picture_path)
+    os.remove(picture_path)
+
+
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join('.', current_app.config['BASEDIR'], 'app', 'static', 'profile_pics', picture_fn)
+    output_size = (200, 200)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+
+    return picture_fn
+
+
 @bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
+        if form.picture.data:
+            if current_user.image_file != 'default.jpg':
+                del_old_picture(current_user.image_file)
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
@@ -194,8 +221,9 @@ def edit_profile():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('edit_profile.html', title='Edit Profile',
-                           form=form)
+                           image_file=image_file, form=form)
 
 
 @bp.route('/todolist', methods=['GET', 'POST'])
@@ -239,3 +267,58 @@ def delete_case():
     Activity.query.filter_by(id=case_id).delete()
     db.session.commit()
     return redirect(url_for('main.todolist'))
+
+
+@bp.route('/calendar')
+@login_required
+def calendar():
+    return render_template('calendar.html', title='Calendar')
+
+@bp.route('/data')
+@login_required
+def return_data():
+
+    events = current_user.followed_events()
+    l = []
+    for i in events:
+        l.append({"id": i.id, "title": i.title, "start": i.start, "end":i.end, "color": i.color, "allDay": i.allDay, "url": i.url})
+    return dumps(l)
+
+
+@bp.route('/calendar_add', methods=['POST'])
+@login_required
+def calendar_add():
+    title = request.form['title']
+    start = request.form['start']
+    end = request.form['end']
+    color = request.form['color']
+    url = request.form['url']
+    if url!="":
+        url = "http://" + url
+    allDay = bool(int(request.form['allDay']))
+    event = Event(title=title, author=current_user, start=start, end=end, color=color, allDay=allDay, url=url)
+    db.session.add(event)
+    db.session.commit()
+    # flash(_l('Your event is now live!'))
+    return jsonify(id=event.id)
+
+@bp.route('/calendar_delete', methods=['POST'])
+@login_required
+def calendar_delete():
+    event_id = request.form['id']
+    Event.query.filter_by(id=event_id).delete()
+    db.session.commit()
+    return jsonify(success=True)
+
+@bp.route('/calendar_delete_all', methods=['POST'])
+@login_required
+def calendar_delete_all():
+    # event_id = request.form['id']
+    # # print(event_id
+    Event.query.filter_by(author=current_user).delete()
+    db.session.commit()
+    return jsonify(success=True)
+
+@bp.route('/countdown')
+def countdown():
+    return render_template('countdown.html')

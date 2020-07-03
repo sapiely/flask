@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+
+
+{% block app_head %}
+<style>
+
+	body {
+		margin: 0;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}
+
+	#script-warning {
+		display: none;
+		background: rgb(255, 255, 255);
+		border-bottom: 1px solid #ddd;
+		padding: 0 10px;
+		line-height: 40px;
+		text-align: center;
+		font-weight: bold;
+		font-size: 12px;
+		color: red;
+	}
+
+	#loading {
+		display: none;
+		position: absolute;
+		top: 70px;
+		right: 10px;
+	}
+
+	#calendar {
+		max-width: 800px;
+		margin: 40px auto;
+		padding: 0 10px;
+	}
+
+</style>
+
+
+
+{% endblock %}
+
+{% block app_content %}
+<body>
+	<div class="container">
+		<div class="row">
+		  <div class="col-sm-3 mb-2">
+			  <form class="form form-horizontal" method="post" role="post">
+			  	<div class='row'>
+					{{ _("Name of Event") }}<input type="text"/>
+				</div>
+			  	<div class='row'>
+					{{ _("Start Date") }}<input type="datetime-local" id="dateStart"/>
+				</div>
+				<div class='row mt-2'>
+				  {{ _("All day") }}<input class="mt-1 ml-1" type="checkbox" name="checkbox_all" id="allDay" checked="checked" onclick="showMe('div1', 'checkbox_all', true)"/>
+			  </div>
+			  	<div class='row' id="div1" style='display: none;'>
+					{{ _("End Date") }}<input type="datetime-local" id="dateEnd" />
+				</div>
+				<div class='row'>
+					{{ _("Color") }}<input class="ml-2" type="color" id="colortext" value="#555555"/>
+				</div>
+				<div class='row mt-2'>
+					Url?<input class="mt-1 ml-1" type="checkbox" name="checkbox_url" id="checkbox_url" onclick="showMe('div2', 'checkbox_url', false)"/>
+				</div>
+				<div class='row' id="div2" style='display: none;'>
+					http://<input class="ml-1"type="text" id="url" />
+				</div>
+			  	<div class='row'>
+					<a class="btn btn-primary text-white" onclick="adding()">{{ _("Add Event") }}</a>
+				</div>
+				<div class='row mt-2'>
+					{{ _("Delete mode") }}<input class="mt-1 ml-1" type="checkbox" name="delete_mode" id="delete_mode" onclick="showMe('div3', 'delete_mode', false)" />
+				</div>
+				<div id='div3' class='row' style='display: none;'>
+					<a class="btn btn-danger text-white" onclick="delete_all()">{{ _("Delete All") }}</a>
+				</div>
+			</form>
+		  </div>
+		  <div class="col-md-auto">
+			<div id='calendar' class="text-blackk" style="margin-top: 0px; margin-bottom: 0px;">
+				<div id='loading'>loading...</div>
+			</div>
+		</div>
+	  </div>
+	</div>
+
+	<div id="calendarModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content bg-light">
+				<div class="modal-header">
+					<h4 id="modalTitle" class="modal-title">{{ _('Event Deleting') }}</h4>
+				</div>
+				<div id="modalBody" class="modal-body"> </div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+					<button type="button" id='delete_btn' class="btn btn-danger" data-dismiss="modal">{{ _('Delete') }}</button>
+				</div>
+			</div>
+		</div>
+		</div>
+	
+
+
+	{% block add_scripts %}
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.1/fullcalendar.min.js'></script>
+		<link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.1/fullcalendar.min.css" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+		<script>
+			function showMe(e,t,n){var d=document.getElementsByName(t),o="none";d[0].checked&&!n?o="block":!d[0].checked&&n&&(o="block"),document.getElementById(e).style.display=o}function delete_all(){confirm("{{ _('Delete all events?') }}")&&confirm("{{ _('Are you sure?') }}")&&$.post("/calendar_delete_all",{}).done(function(){window.location.href="calendar"}).fail(function(){$(eventObj.id).text("{{ _('Error: Could not contact server.') }}")})}function adding(){var e=document.querySelector('input[type="text"]').value,t=document.querySelector('input[id="dateStart"]').value,n=document.querySelector('input[id="dateEnd"]').value,d=document.querySelector('input[id="colortext"]').value,o=document.querySelector('input[id="url"]').value,l=moment(t),a=moment(n);(async()=>{l.isValid()&&a.isValid()?await addingDB(e,moment(t).format(),end=moment(a).format(),d,0,o):l.isValid()&&!a.isValid()?await addingDB(e,moment(t).format(),"",d,1,o):alert("{{ _('Failed.') }}"),setTimeout(()=>{$("#calendar").fullCalendar("refetchEvents")},100)})()}function addingDB(e,t,n="",d,o,l=""){return $.post("/calendar_add",{title:e,start:t,end:n,color:d,url:l,allDay:o}).done(function(e){return window.id_of_event=e.id,window.id_of_event}).fail(function(){$(event_id).text("{{ _('Error: Could not contact server.') }}")}),window.id_of_event}function delete_event(e){if(document.getElementById("delete_mode").checked)return $.post("/calendar_delete",{id:e}).done(function(){$("#calendar").fullCalendar("removeEvents",e)}).fail(function(){$(e).text("{{ _('Error: Could not contact server.') }}")}),!1}$(document).ready(function(){$("#calendar").fullCalendar({header:{left:"prev,next today, addEventButton",center:"title",right:"month,agendaWeek,agendaDay"},buttonText:{today:"{{ _('Today') }}",month:"{{ _('Month') }}",week:"{{ _('Week') }}",day:"{{ _('Day') }}"},contentHeight:500,locale:"{{ _('en') }}",fixedWeekCount:!1,navLinks:!0,editable:!0,eventLimit:!0,events:{url:"data",error:function(){$("#script-warning").show()}},loading:function(e){$("#loading").toggle(e)},customButtons:{},eventClick:function(e,t,n){if(document.getElementById("delete_mode").checked)$("#modalBody").html("{{ _('Event *') }}"+e.title+"{{ _('* will be deleted!') }}"),$("#delete_btn").attr("onclick","delete_event("+e.id+")"),$("#calendarModal").modal();else if(!document.getElementById("delete_mode").checked&&e.url)return window.open(e.url,"_blank"),!1;return!1}})});
+		</script>
+	{% endblock %}
+</body>
+{% endblock %}

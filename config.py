@@ -17,6 +17,7 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['your-email@example.com']
     POSTS_PER_PAGE = 10
+    BASEDIR = os.path.abspath(os.path.dirname(__file__))
     LANGUAGES = ['en', 'ru']
     SECRET_KEY='vasybarebeshma'
     RECAPTCHA_PUBLIC_KEY='6LcMb6YZAAAAAFt6r-yCuNeSp23gE-0kPy9n9J9b'
